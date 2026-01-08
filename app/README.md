@@ -40,85 +40,59 @@ $ npm run start
 # watch mode
 $ npm run start:dev
 
-# Shopify Tracking Middleware (NestJS)
-
-Middleware service to update Shopify order fulfillment tracking via Admin API (GraphQL).
-
-## Features
-- OAuth authentication with Shopify
-- Create fulfillment with tracking number
-- Support carrier tracking (JNE example)
-- Webhook-ready (orders/create)
-- Built with NestJS + Shopify Admin API (2026-01)
-
----
-
-## Tech Stack
-- Node.js
-- NestJS
-- Shopify Admin API (GraphQL)
-- ngrok (local development)
-
----
-
-## Environment Variables
-
-Create `.env` file:
-
-```env
-SHOPIFY_API_KEY=your_api_key
-SHOPIFY_API_SECRET=your_api_secret
-SHOPIFY_STORE_DOMAIN=your-store.myshopify.com
-SHOPIFY_ADMIN_TOKEN=shpat_xxxxx
-SHOPIFY_API_VERSION=2026-01
+# production mode
+$ npm run start:prod
 ```
 
-Installation
+## Run tests
 
 ```bash
-npm install
-npm run start:dev
+# unit tests
+$ npm run test
+
+# e2e tests
+$ npm run test:e2e
+
+# test coverage
+$ npm run test:cov
 ```
 
+## Deployment
 
-Expose local server:
+When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
+
+If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
 
 ```bash
-ngrok http 3000
+$ npm install -g @nestjs/mau
+$ mau deploy
 ```
 
-OAuth Flow
+With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
 
-Open:
+## Resources
 
-/api/auth?shop=your-store.myshopify.com
+Check out a few resources that may come in handy when working with NestJS:
 
+- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
+- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
+- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
+- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
+- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
+- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
+- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
+- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
 
-Grant permission
+## Support
 
-Access token will be generated
+Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
 
-Update Tracking API
-Endpoint
-POST /api/tracking/update
+## Stay in touch
 
-Payload
-```json
-{
-  "orderId": 6861841137977,
-  "trackingNumber": "JNE123456",
-  "trackingUrl": "https://jne.co.id/track/JNE123456",
-  "company": "JNE"
-}
-```
+- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
+- Website - [https://nestjs.com](https://nestjs.com/)
+- Twitter - [@nestframework](https://twitter.com/nestframework)
 
-Success Response
-```json
-{
-  "ok": true,
-  "status": "SUCCESS",
-  "fulfillment": {
-    "id": "gid://shopify/Fulfillment/..."
-  }
-}
-```
+## License
+
+Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).

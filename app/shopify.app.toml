@@ -1,0 +1,19 @@
+client_id = "b453bd7d3aed35a4e9b445b406018624"
+name = "Middleware Tracker"
+application_url = "https://11b07636fe48.ngrok-free.app"
+embedded = true
+
+[webhooks]
+api_version = "2026-01"
+
+[[webhooks.subscriptions]]
+topics = ["orders/create"]
+uri = "/api/webhooks/orders-create"
+
+[access_scopes]
+scopes = "read_orders,write_fulfillments,read_fulfillments,read_assigned_fulfillment_orders,write_assigned_fulfillment_orders,read_merchant_managed_fulfillment_orders,write_merchant_managed_fulfillment_orders"
+
+[auth]
+redirect_urls = [
+  "https://11b07636fe48.ngrok-free.app/api/auth"
+]
