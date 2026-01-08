@@ -1,53 +1,194 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
-
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
-
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
-
-## Description
-
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
-
-## Project setup
-
-```bash
-$ npm install
-```
-
-## Compile and run the project
-
-```bash
-# development
-$ npm run start
-
-# watch mode
-$ npm run start:dev
-
 # Shopify Tracking Middleware (NestJS)
 
-Middleware service to update Shopify order fulfillment tracking via Admin API (GraphQL).
+Middleware service untuk mengupdate tracking fulfillment order Shopify melalui Admin API (GraphQL).
 
-## Features
-- OAuth authentication with Shopify
-- Create fulfillment with tracking number
-- Support carrier tracking (JNE example)
+## Deskripsi
+
+Aplikasi ini adalah middleware NestJS yang terintegrasi dengan Shopify untuk mengelola fulfillment tracking. Aplikasi ini menyediakan endpoint API untuk autentikasi OAuth dengan Shopify dan update tracking number pada order fulfillment.
+
+## Fitur Utama
+
+### 1. OAuth Authentication dengan Shopify
+- Endpoint `/api/auth` untuk inisiasi dan callback OAuth
+- Verifikasi HMAC untuk keamanan
+- Mendapatkan access token dari Shopify
+
+### 2. Update Tracking Fulfillment
+- Endpoint `POST /api/tracking/update` untuk update tracking number
+- Menggunakan Shopify Admin API GraphQL
+- Mendukung carrier tracking (contoh: JNE)
+
+### 3. Webhook Handler
+- Endpoint `POST /api/webhooks/orders-create` untuk menangani webhook order baru
+- Logging untuk debugging
+
+## Teknologi
+
+- **Framework**: NestJS
+- **Bahasa**: TypeScript
+- **API**: Shopify Admin API (REST & GraphQL)
+- **Authentication**: OAuth 2.0 dengan HMAC verification
+
+## Setup dan Instalasi
+
+### Prerequisites
+
+- Node.js (versi 18+)
+- NPM atau Yarn
+- Shopify store dengan akses admin
+
+### Instalasi
+
+```bash
+# Clone repository
+git clone <repository-url>
+cd middleware-nest
+
+# Install dependencies
+npm install
+```
+
+### Konfigurasi Environment
+
+Buat file `.env` di root directory dengan konfigurasi berikut:
+
+```env
+# Shopify Configuration
+SHOPIFY_API_KEY=your_shopify_api_key
+SHOPIFY_API_SECRET=your_shopify_api_secret
+SHOPIFY_STORE_DOMAIN=your-store.myshopify.com
+SHOPIFY_ADMIN_TOKEN=your_admin_access_token
+SHOPIFY_SCOPES=read_orders,write_fulfillments
+
+# App Configuration
+APP_URL=https://your-app-url.com
+PORT=3000
+```
+
+## Menjalankan Aplikasi
+
+```bash
+# Development mode
+npm run start:dev
+
+# Production build
+npm run build
+npm run start:prod
+
+# Testing
+npm run test
+```
+
+## API Documentation
+
+### Authentication
+
+#### GET /api/auth
+Inisiasi OAuth flow dengan Shopify.
+
+**Query Parameters:**
+- `shop`: Domain Shopify store (contoh: `your-store.myshopify.com`)
+
+**Response (setelah OAuth):**
+```json
+{
+  "ok": true,
+  "shop": "your-store.myshopify.com",
+  "scope": "read_orders,write_fulfillments",
+  "access_token": "shpat_...",
+  "note": "Copy access_token ini. Untuk production simpan ke DB."
+}
+```
+
+### Tracking Update
+
+#### POST /api/tracking/update
+Update tracking number pada fulfillment order.
+
+**Request Body:**
+```json
+{
+  "orderId": "123456789",
+  "trackingNumber": "1234567890",
+  "trackingUrl": "https://jne.co.id/tracking/1234567890",
+  "company": "JNE"
+}
+```
+
+**Response:**
+```json
+{
+  "ok": true,
+  "fulfillment": {
+    "id": "gid://shopify/Fulfillment/12345",
+    "status": "SUCCESS",
+    "trackingInfo": {
+      "number": "1234567890",
+      "url": "https://jne.co.id/tracking/1234567890",
+      "company": "JNE"
+    }
+  }
+}
+```
+
+### Webhooks
+
+#### POST /api/webhooks/orders-create
+Menangani webhook ketika order baru dibuat di Shopify.
+
+**Headers:**
+- `X-Shopify-Topic`: `orders/create`
+- `X-Shopify-Hmac-Sha256`: HMAC signature untuk verifikasi
+
+## Struktur Proyek
+
+```
+src/
+├── auth/
+│   └── auth.controller.ts          # OAuth authentication
+├── tracking/
+│   ├── tracking.controller.ts      # Tracking update endpoint
+│   └── shopify-fulfillment.service.ts # Shopify API service
+├── webhooks/
+│   └── webhooks.controller.ts      # Webhook handlers
+├── app.controller.ts               # Main controller
+├── app.module.ts                   # Main module
+├── app.service.ts                  # Main service
+└── main.ts                         # Application bootstrap
+```
+
+## Development
+
+### Scripts
+
+- `npm run start:dev`: Jalankan dalam mode development dengan hot reload
+- `npm run build`: Build aplikasi untuk production
+- `npm run test`: Jalankan unit tests
+- `npm run lint`: Lint dan fix kode
+
+### Environment Variables
+
+| Variable | Description | Required |
+|----------|-------------|----------|
+| `SHOPIFY_API_KEY` | Shopify App API Key | Yes |
+| `SHOPIFY_API_SECRET` | Shopify App API Secret | Yes |
+| `SHOPIFY_STORE_DOMAIN` | Shopify store domain | Yes |
+| `SHOPIFY_ADMIN_TOKEN` | Admin access token | Yes |
+| `SHOPIFY_SCOPES` | OAuth scopes | No (default: read_orders,write_fulfillments) |
+| `APP_URL` | Application URL | Yes |
+| `PORT` | Server port | No (default: 3000) |
+
+## Contributing
+
+1. Fork repository
+2. Buat branch fitur (`git checkout -b feature/AmazingFeature`)
+3. Commit changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push ke branch (`git push origin feature/AmazingFeature`)
+5. Buat Pull Request
+
+## License
+
+This project is licensed under the UNLICENSED License.
 - Webhook-ready (orders/create)
 - Built with NestJS + Shopify Admin API (2026-01)
 
